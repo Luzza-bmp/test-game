@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- ENTITY CONFIG ---
     var WALL_THICKNESS = 100;
-    var PLAYER_RADIUS = 25;  // INCREASED from 20 to 25 (25% bigger)
+    var PLAYER_RADIUS = 60;  // Significantly increased player size
     var BALL_RADIUS = 12;
     var GOAL_WIDTH = 250;
     var GOAL_DEPTH = 30;
@@ -71,37 +71,37 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- CREATE WALLS ---
     var walls = [
         // Top wall
-        Bodies.rectangle(width / 2, -WALL_THICKNESS / 2, width, WALL_THICKNESS, {
+        Bodies.rectangle(width / 2, 0, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
             render: { fillStyle: '#333' }
         }),
         // Bottom wall
-        Bodies.rectangle(width / 2, height + WALL_THICKNESS / 2, width, WALL_THICKNESS, {
+        Bodies.rectangle(width / 2, height, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
             render: { fillStyle: '#333' }
         }),
         // Left wall (top part)
-        Bodies.rectangle(-WALL_THICKNESS / 2, height / 2 - GOAL_WIDTH / 2 - 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        Bodies.rectangle(0, height / 2 - GOAL_WIDTH / 2 - 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
             isStatic: true,
             label: 'WallLeftTop',
             render: { fillStyle: '#333' }
         }),
         // Left wall (bottom part)
-        Bodies.rectangle(-WALL_THICKNESS / 2, height / 2 + GOAL_WIDTH / 2 + 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        Bodies.rectangle(0, height / 2 + GOAL_WIDTH / 2 + 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
             isStatic: true,
             label: 'WallLeftBottom',
             render: { fillStyle: '#333' }
         }),
         // Right wall (top part)
-        Bodies.rectangle(width + WALL_THICKNESS / 2, height / 2 - GOAL_WIDTH / 2 - 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        Bodies.rectangle(width, height / 2 - GOAL_WIDTH / 2 - 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
             isStatic: true,
             label: 'WallRightTop',
             render: { fillStyle: '#333' }
         }),
         // Right wall (bottom part)
-        Bodies.rectangle(width + WALL_THICKNESS / 2, height / 2 + GOAL_WIDTH / 2 + 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        Bodies.rectangle(width, height / 2 + GOAL_WIDTH / 2 + 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
             isStatic: true,
             label: 'WallRightBottom',
             render: { fillStyle: '#333' }
@@ -132,15 +132,15 @@ document.addEventListener("DOMContentLoaded", function () {
         var texture = isRed ? 'img/red-player.png' : 'img/blue-player.png';
         var body = Bodies.circle(x, y, PLAYER_RADIUS, {
             label: team + 'Player',
-            restitution: 0.5,
-            frictionAir: 0.05,
-            friction: 0.1,
+            restitution: 0.6,
+            frictionAir: 0.008,
+            friction: 0.002,
             density: 0.002,
             render: {
                 sprite: {
                     texture: texture,
-                    xScale: 0.06,  // ADJUSTED DOWN from 0.08 for larger player size
-                    yScale: 0.06
+                    xScale: 0.12,  // Significantly increased sprite size
+                    yScale: 0.12
                 },
                 // Fallback color in case image doesn't load
                 fillStyle: team === 'red' ? '#ff0000' : '#0000ff'
@@ -153,10 +153,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function createBall(x, y) {
         return Bodies.circle(x, y, BALL_RADIUS, {
             label: 'Ball',
-            restitution: 0.8,
-            frictionAir: 0.015,
-            friction: 0.005,
-            density: 0.001,
+            restitution: 0.85,
+            frictionAir: 0.008,
+            friction: 0.002,
+            density: 0.0008,
             render: {
                 fillStyle: '#ffffff',
                 strokeStyle: '#000000',
@@ -176,19 +176,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         players = [];
 
-        // 5 Red Players (Left) - ADJUSTED POSITIONS for larger players
-        players.push(createPlayer(110, height / 2, 'red'));
-        players.push(createPlayer(270, height / 2 - 110, 'red'));
-        players.push(createPlayer(270, height / 2 + 110, 'red'));
-        players.push(createPlayer(470, height / 2 - 60, 'red'));
-        players.push(createPlayer(470, height / 2 + 60, 'red'));
+        // 5 Red Players (Left) - Adjusted positions for larger players
+        players.push(createPlayer(130, height / 2, 'red'));
+        players.push(createPlayer(300, height / 2 - 130, 'red'));
+        players.push(createPlayer(300, height / 2 + 130, 'red'));
+        players.push(createPlayer(500, height / 2 - 70, 'red'));
+        players.push(createPlayer(500, height / 2 + 70, 'red'));
 
-        // 5 Blue Players (Right) - ADJUSTED POSITIONS for larger players
-        players.push(createPlayer(width - 110, height / 2, 'blue'));
-        players.push(createPlayer(width - 270, height / 2 - 110, 'blue'));
-        players.push(createPlayer(width - 270, height / 2 + 110, 'blue'));
-        players.push(createPlayer(width - 470, height / 2 - 60, 'blue'));
-        players.push(createPlayer(width - 470, height / 2 + 60, 'blue'));
+        // 5 Blue Players (Right) - Adjusted positions for larger players
+        players.push(createPlayer(width - 130, height / 2, 'blue'));
+        players.push(createPlayer(width - 300, height / 2 - 130, 'blue'));
+        players.push(createPlayer(width - 300, height / 2 + 130, 'blue'));
+        players.push(createPlayer(width - 500, height / 2 - 70, 'blue'));
+        players.push(createPlayer(width - 500, height / 2 + 70, 'blue'));
 
         // Ball at center
         ball = createBall(width / 2, height / 2);
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- INPUT HANDLING (Drag & Flick) ---
     var dragStart = null;
     var selectedBody = null;
-    var maxForce = 0.06;  // INCREASED from 0.02 (3x stronger max force)
+    var maxForce = 0.08;  // Increased power for better movement
     var currentMousePos = null; // Track mouse position for arrow drawing
 
     render.canvas.addEventListener('mousedown', function (e) { handleInputStart(e); });
@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var dx = dragStart.x - x;
         var dy = dragStart.y - y;
 
-        var forceVector = Vector.create(dx * 0.3, dy * 0.3);  // INCREASED from 0.1 to 0.3 (3x stronger!)
+        var forceVector = Vector.create(dx * 0.35, dy * 0.35);  // Strong, responsive force
 
         var magnitude = Vector.magnitude(forceVector);
         if (magnitude > maxForce) {
@@ -367,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            if (totalEnergy < 0.05) {
+            if (totalEnergy < 0.01) {
                 gameState.isTurnActive = false;
                 gameState.canShoot = true;
                 switchTurn();
@@ -435,4 +435,3 @@ document.addEventListener("DOMContentLoaded", function () {
         render.canvas.height = container.clientHeight;
     });
 });
-``
