@@ -75,14 +75,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var goalDepthOffset = 25; // How far back the goal extends
     
     var walls = [
-        // Top wall
-        Bodies.rectangle(width / 2, fieldMarginY, width - (fieldMarginX * 2), WALL_THICKNESS, {
+        // Top wall (full length)
+        Bodies.rectangle(width / 2, fieldMarginY, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
             render: { fillStyle: 'transparent' }
         }),
-        // Bottom wall
-        Bodies.rectangle(width / 2, height - fieldMarginY, width - (fieldMarginX * 2), WALL_THICKNESS, {
+        // Bottom wall (full length)
+        Bodies.rectangle(width / 2, height - fieldMarginY, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
             render: { fillStyle: 'transparent' }
@@ -145,6 +145,31 @@ document.addEventListener("DOMContentLoaded", function () {
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2, height / 2 + GOAL_WIDTH / 2 + 5, goalDepthOffset, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalBottom',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Extra corner walls to seal any gaps
+        // Top-left corner
+        Bodies.rectangle(fieldMarginX/2, fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'CornerTopLeft',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Top-right corner
+        Bodies.rectangle(width - fieldMarginX/2, fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'CornerTopRight',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Bottom-left corner
+        Bodies.rectangle(fieldMarginX/2, height - fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'CornerBottomLeft',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Bottom-right corner
+        Bodies.rectangle(width - fieldMarginX/2, height - fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'CornerBottomRight',
             render: { fillStyle: 'transparent' }
         })
     ];
