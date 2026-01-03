@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- ENTITY CONFIG ---
     var WALL_THICKNESS = 100;
-    var PLAYER_RADIUS = 60;  // Significantly increased player size
+    var PLAYER_RADIUS = 30;  // Significantly increased player size
     var BALL_RADIUS = 12;
     var GOAL_WIDTH = 250;
     var GOAL_DEPTH = 30;
