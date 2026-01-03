@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Calculate playable field boundaries (matching the white lines in image)
     var fieldMarginX = width * 0.065;  // Left/right margins
     var fieldMarginY = height * 0.08;   // Top/bottom margins
+    var goalDepthOffset = 25; // How far back the goal extends
     
     var walls = [
         // Top wall
@@ -87,27 +88,63 @@ document.addEventListener("DOMContentLoaded", function () {
             render: { fillStyle: 'transparent' }
         }),
         // Left wall (top part - above goal)
-        Bodies.rectangle(fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
+        Bodies.rectangle(fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
             isStatic: true,
             label: 'WallLeftTop',
             render: { fillStyle: 'transparent' }
         }),
         // Left wall (bottom part - below goal)
-        Bodies.rectangle(fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
+        Bodies.rectangle(fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
             isStatic: true,
             label: 'WallLeftBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Right wall (top part - above goal)
-        Bodies.rectangle(width - fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
+        Bodies.rectangle(width - fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
             isStatic: true,
             label: 'WallRightTop',
             render: { fillStyle: 'transparent' }
         }),
         // Right wall (bottom part - below goal)
-        Bodies.rectangle(width - fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
+        Bodies.rectangle(width - fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
             isStatic: true,
             label: 'WallRightBottom',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Left goal back wall (at the back of goal area)
+        Bodies.rectangle(fieldMarginX - goalDepthOffset, height / 2, WALL_THICKNESS, GOAL_WIDTH + 20, {
+            isStatic: true,
+            label: 'LeftGoalBack',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Left goal top wall (roof of goal)
+        Bodies.rectangle(fieldMarginX - goalDepthOffset/2, height / 2 - GOAL_WIDTH / 2 - 5, goalDepthOffset, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'LeftGoalTop',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Left goal bottom wall (floor of goal)
+        Bodies.rectangle(fieldMarginX - goalDepthOffset/2, height / 2 + GOAL_WIDTH / 2 + 5, goalDepthOffset, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'LeftGoalBottom',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Right goal back wall (at the back of goal area)
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset, height / 2, WALL_THICKNESS, GOAL_WIDTH + 20, {
+            isStatic: true,
+            label: 'RightGoalBack',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Right goal top wall (roof of goal)
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2, height / 2 - GOAL_WIDTH / 2 - 5, goalDepthOffset, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'RightGoalTop',
+            render: { fillStyle: 'transparent' }
+        }),
+        // Right goal bottom wall (floor of goal)
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2, height / 2 + GOAL_WIDTH / 2 + 5, goalDepthOffset, WALL_THICKNESS, {
+            isStatic: true,
+            label: 'RightGoalBottom',
             render: { fillStyle: 'transparent' }
         })
     ];
@@ -117,14 +154,14 @@ document.addEventListener("DOMContentLoaded", function () {
         isStatic: true,
         isSensor: true,
         label: 'GoalLeft',
-        render: { fillStyle: 'rgba(255, 0, 0, 0.2)' }
+        render: { fillStyle: 'transparent' }
     });
 
     var goalRight = Bodies.rectangle(width - fieldMarginX + 15, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
         isStatic: true,
         isSensor: true,
         label: 'GoalRight',
-        render: { fillStyle: 'rgba(0, 0, 255, 0.2)' }
+        render: { fillStyle: 'transparent' }
     });
 
     // Add walls and goals to world
