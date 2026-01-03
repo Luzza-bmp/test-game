@@ -1,2 +1,2 @@
 # test-game
-its cob game testing version
+Cob is web based flick and drag soccer game.
