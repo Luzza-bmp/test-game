@@ -55,11 +55,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // --- ENTITY CONFIG ---
-    var WALL_THICKNESS = 100;
-    var PLAYER_RADIUS = 30;  // Significantly increased player size
-    var BALL_RADIUS = 12;
-    var GOAL_WIDTH = 250;
-    var GOAL_DEPTH = 30;
+    var WALL_THICKNESS = 10;
+    var PLAYER_RADIUS = 28;  // Increased player size
+    var BALL_RADIUS = 10;
+    var GOAL_WIDTH = 120;  // Match goal post size in image
+    var GOAL_DEPTH = 40;
 
     // DECLARE PLAYERS AND BALL ARRAYS
     var players = [];
@@ -69,58 +69,62 @@ document.addEventListener("DOMContentLoaded", function () {
     var defaultCategory = 0x0001;
 
     // --- CREATE WALLS ---
+    // Calculate playable field boundaries (matching the white lines in image)
+    var fieldMarginX = width * 0.065;  // Left/right margins
+    var fieldMarginY = height * 0.08;   // Top/bottom margins
+    
     var walls = [
         // Top wall
-        Bodies.rectangle(width / 2, 0, width, WALL_THICKNESS, {
+        Bodies.rectangle(width / 2, fieldMarginY, width - (fieldMarginX * 2), WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
-            render: { fillStyle: '#333' }
+            render: { fillStyle: 'transparent' }
         }),
         // Bottom wall
-        Bodies.rectangle(width / 2, height, width, WALL_THICKNESS, {
+        Bodies.rectangle(width / 2, height - fieldMarginY, width - (fieldMarginX * 2), WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
-            render: { fillStyle: '#333' }
+            render: { fillStyle: 'transparent' }
         }),
-        // Left wall (top part)
-        Bodies.rectangle(0, height / 2 - GOAL_WIDTH / 2 - 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        // Left wall (top part - above goal)
+        Bodies.rectangle(fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
             isStatic: true,
             label: 'WallLeftTop',
-            render: { fillStyle: '#333' }
+            render: { fillStyle: 'transparent' }
         }),
-        // Left wall (bottom part)
-        Bodies.rectangle(0, height / 2 + GOAL_WIDTH / 2 + 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        // Left wall (bottom part - below goal)
+        Bodies.rectangle(fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
             isStatic: true,
             label: 'WallLeftBottom',
-            render: { fillStyle: '#333' }
+            render: { fillStyle: 'transparent' }
         }),
-        // Right wall (top part)
-        Bodies.rectangle(width, height / 2 - GOAL_WIDTH / 2 - 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        // Right wall (top part - above goal)
+        Bodies.rectangle(width - fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
             isStatic: true,
             label: 'WallRightTop',
-            render: { fillStyle: '#333' }
+            render: { fillStyle: 'transparent' }
         }),
-        // Right wall (bottom part)
-        Bodies.rectangle(width, height / 2 + GOAL_WIDTH / 2 + 50, WALL_THICKNESS, height / 2 - GOAL_WIDTH / 2, {
+        // Right wall (bottom part - below goal)
+        Bodies.rectangle(width - fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 20, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2, {
             isStatic: true,
             label: 'WallRightBottom',
-            render: { fillStyle: '#333' }
+            render: { fillStyle: 'transparent' }
         })
     ];
 
     // --- CREATE GOALS (as sensors) ---
-    var goalLeft = Bodies.rectangle(0, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
+    var goalLeft = Bodies.rectangle(fieldMarginX - 15, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
         isStatic: true,
         isSensor: true,
         label: 'GoalLeft',
-        render: { fillStyle: 'rgba(255, 0, 0, 0.3)' }
+        render: { fillStyle: 'rgba(255, 0, 0, 0.2)' }
     });
 
-    var goalRight = Bodies.rectangle(width, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
+    var goalRight = Bodies.rectangle(width - fieldMarginX + 15, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
         isStatic: true,
         isSensor: true,
         label: 'GoalRight',
-        render: { fillStyle: 'rgba(0, 0, 255, 0.3)' }
+        render: { fillStyle: 'rgba(0, 0, 255, 0.2)' }
     });
 
     // Add walls and goals to world
@@ -139,8 +143,8 @@ document.addEventListener("DOMContentLoaded", function () {
             render: {
                 sprite: {
                     texture: texture,
-                    xScale: 0.12,  // Significantly increased sprite size
-                    yScale: 0.12
+                    xScale: 0.11,  // Increased sprite size
+                    yScale: 0.11
                 },
                 // Fallback color in case image doesn't load
                 fillStyle: team === 'red' ? '#ff0000' : '#0000ff'
@@ -176,19 +180,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         players = [];
 
-        // 5 Red Players (Left) - Adjusted positions for larger players
-        players.push(createPlayer(130, height / 2, 'red'));
-        players.push(createPlayer(300, height / 2 - 130, 'red'));
-        players.push(createPlayer(300, height / 2 + 130, 'red'));
-        players.push(createPlayer(500, height / 2 - 70, 'red'));
-        players.push(createPlayer(500, height / 2 + 70, 'red'));
+        // Calculate positions within field boundaries
+        var leftTeamX = fieldMarginX + 80;
+        var leftMidX = width * 0.3;
+        var rightMidX = width * 0.7;
+        var rightTeamX = width - fieldMarginX - 80;
+        
+        // 5 Red Players (Left side) - positioned within field
+        players.push(createPlayer(leftTeamX, height / 2, 'red'));  // Goalkeeper
+        players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));  // Defender
+        players.push(createPlayer(leftMidX - 50, height / 2 + 100, 'red'));  // Defender
+        players.push(createPlayer(leftMidX + 80, height / 2 - 60, 'red'));  // Forward
+        players.push(createPlayer(leftMidX + 80, height / 2 + 60, 'red'));  // Forward
 
-        // 5 Blue Players (Right) - Adjusted positions for larger players
-        players.push(createPlayer(width - 130, height / 2, 'blue'));
-        players.push(createPlayer(width - 300, height / 2 - 130, 'blue'));
-        players.push(createPlayer(width - 300, height / 2 + 130, 'blue'));
-        players.push(createPlayer(width - 500, height / 2 - 70, 'blue'));
-        players.push(createPlayer(width - 500, height / 2 + 70, 'blue'));
+        // 5 Blue Players (Right side) - positioned within field
+        players.push(createPlayer(rightTeamX, height / 2, 'blue'));  // Goalkeeper
+        players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));  // Defender
+        players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));  // Defender
+        players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));  // Forward
+        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));  // Forward
 
         // Ball at center
         ball = createBall(width / 2, height / 2);
@@ -204,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- INPUT HANDLING (Drag & Flick) ---
     var dragStart = null;
     var selectedBody = null;
-    var maxForce = 0.08;  // Increased power for better movement
+    var maxForce = 0.06;  // Adjusted for player size
     var currentMousePos = null; // Track mouse position for arrow drawing
 
     render.canvas.addEventListener('mousedown', function (e) { handleInputStart(e); });
@@ -264,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var dx = dragStart.x - x;
         var dy = dragStart.y - y;
 
-        var forceVector = Vector.create(dx * 0.35, dy * 0.35);  // Strong, responsive force
+        var forceVector = Vector.create(dx * 0.32, dy * 0.32);  // Adjusted multiplier
 
         var magnitude = Vector.magnitude(forceVector);
         if (magnitude > maxForce) {
