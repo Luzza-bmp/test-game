@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- ENTITY CONFIG ---
     var WALL_THICKNESS = 10;
     var PLAYER_RADIUS = 28;  // Increased player size
-    var BALL_RADIUS = 10;
+    var BALL_RADIUS = 20;
     var GOAL_WIDTH = 120;  // Match goal post size in image
     var GOAL_DEPTH = 40;
 
@@ -76,98 +76,98 @@ document.addEventListener("DOMContentLoaded", function () {
     
     var walls = [
         // Top wall (full length)
-        Bodies.rectangle(width / 2, fieldMarginY, width, WALL_THICKNESS, {
+        Bodies.rectangle(width / 2, fieldMarginY + 20, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
             render: { fillStyle: 'transparent' }
         }),
         // Bottom wall (full length)
-        Bodies.rectangle(width / 2, height - fieldMarginY, width, WALL_THICKNESS, {
+        Bodies.rectangle(width / 2, height - fieldMarginY - 13, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Left wall (top part - above goal)
-        Bodies.rectangle(fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
+        Bodies.rectangle(fieldMarginX + 102, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
             isStatic: true,
             label: 'WallLeftTop',
             render: { fillStyle: 'transparent' }
         }),
         // Left wall (bottom part - below goal)
-        Bodies.rectangle(fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
+        Bodies.rectangle(fieldMarginX + 102, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 10, {
             isStatic: true,
             label: 'WallLeftBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Right wall (top part - above goal)
-        Bodies.rectangle(width - fieldMarginX, height / 2 - GOAL_WIDTH / 2 - 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
+        Bodies.rectangle(width - fieldMarginX - 103, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
             isStatic: true,
             label: 'WallRightTop',
             render: { fillStyle: 'transparent' }
         }),
         // Right wall (bottom part - below goal)
-        Bodies.rectangle(width - fieldMarginX, height / 2 + GOAL_WIDTH / 2 + 10, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 10, {
+        Bodies.rectangle(width - fieldMarginX - 103, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 12, {
             isStatic: true,
             label: 'WallRightBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Left goal back wall (at the back of goal area)
-        Bodies.rectangle(fieldMarginX - goalDepthOffset, height / 2, WALL_THICKNESS, GOAL_WIDTH + 20, {
+        Bodies.rectangle(fieldMarginX - goalDepthOffset + 40, (height / 2) + 5, WALL_THICKNESS, GOAL_WIDTH + 50, {
             isStatic: true,
             label: 'LeftGoalBack',
             render: { fillStyle: 'transparent' }
         }),
         // Left goal top wall (roof of goal)
-        Bodies.rectangle(fieldMarginX - goalDepthOffset/2, height / 2 - GOAL_WIDTH / 2 - 5, goalDepthOffset, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX - goalDepthOffset/2 + 70, height / 2 - GOAL_WIDTH / 2 - 20, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalTop',
             render: { fillStyle: 'transparent' }
         }),
         // Left goal bottom wall (floor of goal)
-        Bodies.rectangle(fieldMarginX - goalDepthOffset/2, height / 2 + GOAL_WIDTH / 2 + 5, goalDepthOffset, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX - goalDepthOffset/2 + 70, height / 2 + GOAL_WIDTH / 2 + 27, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Right goal back wall (at the back of goal area)
-        Bodies.rectangle(width - fieldMarginX + goalDepthOffset, height / 2, WALL_THICKNESS, GOAL_WIDTH + 20, {
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset - 40, height / 2 + 5, WALL_THICKNESS, GOAL_WIDTH + 60, {
             isStatic: true,
             label: 'RightGoalBack',
             render: { fillStyle: 'transparent' }
         }),
         // Right goal top wall (roof of goal)
-        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2, height / 2 - GOAL_WIDTH / 2 - 5, goalDepthOffset, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2 - 73, height / 2 - GOAL_WIDTH / 2 - 18, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalTop',
             render: { fillStyle: 'transparent' }
         }),
         // Right goal bottom wall (floor of goal)
-        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2, height / 2 + GOAL_WIDTH / 2 + 5, goalDepthOffset, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX + goalDepthOffset/2 - 73, height / 2 + GOAL_WIDTH / 2 + 28, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalBottom',
             render: { fillStyle: 'transparent' }
         }),
         // Extra corner walls to seal any gaps
         // Top-left corner
-        Bodies.rectangle(fieldMarginX/2, fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX/2 + 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopLeft',
             render: { fillStyle: 'transparent' }
         }),
         // Top-right corner
-        Bodies.rectangle(width - fieldMarginX/2, fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX/2 - 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopRight',
             render: { fillStyle: 'transparent' }
         }),
         // Bottom-left corner
-        Bodies.rectangle(fieldMarginX/2, height - fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(fieldMarginX/2 + 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerBottomLeft',
             render: { fillStyle: 'transparent' }
         }),
         // Bottom-right corner
-        Bodies.rectangle(width - fieldMarginX/2, height - fieldMarginY, fieldMarginX, WALL_THICKNESS, {
+        Bodies.rectangle(width - fieldMarginX/2 - 100, height - fieldMarginY - 7, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerBottomRight',
             render: { fillStyle: 'transparent' }
@@ -175,14 +175,14 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
     // --- CREATE GOALS (as sensors) ---
-    var goalLeft = Bodies.rectangle(fieldMarginX - 15, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
+    var goalLeft = Bodies.rectangle(fieldMarginX + 65, height / 2 + 5, GOAL_DEPTH + 50, GOAL_WIDTH + 16, {
         isStatic: true,
         isSensor: true,
         label: 'GoalLeft',
         render: { fillStyle: 'transparent' }
     });
 
-    var goalRight = Bodies.rectangle(width - fieldMarginX + 15, height / 2, GOAL_DEPTH, GOAL_WIDTH, {
+    var goalRight = Bodies.rectangle(width - fieldMarginX - 65, height / 2 + 5, GOAL_DEPTH + 50, GOAL_WIDTH + 16, {
         isStatic: true,
         isSensor: true,
         label: 'GoalRight',
@@ -196,17 +196,17 @@ document.addEventListener("DOMContentLoaded", function () {
     function createPlayer(x, y, team) {
         var isRed = team === 'red';
         var texture = isRed ? 'img/red-player.png' : 'img/blue-player.png';
-        var body = Bodies.circle(x, y, PLAYER_RADIUS, {
+        var body = Bodies.circle(x, y, PLAYER_RADIUS , {
             label: team + 'Player',
-            restitution: 0.6,
+            restitution: 0.9,
             frictionAir: 0.008,
-            friction: 0.002,
+            friction: 0.001,
             density: 0.002,
             render: {
                 sprite: {
                     texture: texture,
-                    xScale: 0.11,  // Increased sprite size
-                    yScale: 0.11
+                    xScale: 0.22,  // Increased sprite size
+                    yScale: 0.22
                 },
                 // Fallback color in case image doesn't load
                 fillStyle: team === 'red' ? '#ff0000' : '#0000ff'
@@ -219,9 +219,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function createBall(x, y) {
         return Bodies.circle(x, y, BALL_RADIUS, {
             label: 'Ball',
-            restitution: 0.85,
+            restitution: 0.95,
             frictionAir: 0.008,
-            friction: 0.002,
+            friction: 0.001,
             density: 0.0008,
             render: {
                 fillStyle: '#ffffff',
@@ -335,15 +335,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         var dx = dragStart.x - x;
         var dy = dragStart.y - y;
-
-        var forceVector = Vector.create(dx * 0.32, dy * 0.32);  // Adjusted multiplier
-
-        var magnitude = Vector.magnitude(forceVector);
-        if (magnitude > maxForce) {
-            forceVector = Vector.mult(Vector.normalise(forceVector), maxForce);
-        }
-
-        if (magnitude > 0.0005) {
+        
+        // Calculate the raw distance first
+        var rawDistance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Scale force based on distance (0 to maxForce)
+        var forceMagnitude = Math.min(rawDistance * 0.0006, maxForce);  // Scale up distance to force
+        
+        // Create normalized direction vector
+        if (rawDistance > 0.0005) {
+            var normalizedDx = dx / rawDistance;
+            var normalizedDy = dy / rawDistance;
+            
+            // Apply force in the direction with calculated magnitude
+            var forceVector = Vector.create(normalizedDx * forceMagnitude, normalizedDy * forceMagnitude);
+            
             Body.applyForce(selectedBody, selectedBody.position, forceVector);
             gameState.canShoot = false;
             gameState.isTurnActive = true;
