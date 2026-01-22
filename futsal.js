@@ -2,8 +2,8 @@
 var width, height, engine, mysteryBox, mysteryBoxTurn, gameState, lastMysteryBoxSpawn, storedPowerup, sizePower, players, ball, lastPowerupGiven;
 
 // Wait for the DOM to load
-document.addEventListener("DOMContentLoaded", function () {
-    var container = document.querySelector('.futsal');
+document.addEventListener("DOMContentLoaded", function () { // so the domcontentloded is there because the js may run before the html file is fully loaded and this helps to wait the js to run only after the html file is loaded.
+    var container = document.querySelector('.futsal');// here document is the built in object in js that represents the whole html file. queryselector is used to select the element with the class futsal., add event listner is method to listen the events, dom content loaded is the event of event listner.
     if (container) {
         var w = container.clientWidth;
         var h = container.clientHeight;
@@ -65,14 +65,15 @@ document.addEventListener("DOMContentLoaded", function () {
     var urlParams = new URLSearchParams(window.location.search);
     var targetGoals = parseInt(urlParams.get('goals')) || 3;
 
-    gameState = {
+    gameState = {//gamestate ma chai u are tracking what u are doing ani function use hanesi matra game ma tyo kura haru implement hunxa.
         turn: 'red',
         isTurnActive: false,
         score: { red: 0, blue: 0 },
         canShoot: true,
         turnCount: 0,
         maxGoals: targetGoals,
-        isPaused: false
+        isPaused: false,//pause state ra pause function bhanne hunxa, pause state le chai remembers that game is paused so that weird physics apply na hoss, ani pause function halna imp xa cause tesle chai runner lai stop garxa and start garxa.
+        currentFormation: '2-2' // Initial formation
     };
 
     // --- DOM ELEMENTS ---
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     engine = Engine.create();
     engine.world.gravity.y = 0;
 
-    var render = Render.create({
+    var render = Render.create({// rendring means creating canvas and drawing and putting obejects using js.
         element: container,
         engine: engine,
         options: {
@@ -114,71 +115,86 @@ document.addEventListener("DOMContentLoaded", function () {
     var defaultCategory = 0x0001;
 
     // --- CREATE WALLS ---
-    var fieldMarginX = width * 0.065;
-    var fieldMarginY = height * 0.08;
-    var goalDepthOffset = 25;
+    // Calculate playable field boundaries (matching the white lines in image)
+    var fieldMarginX = width * 0.065; // Left/right margins
+    var fieldMarginY = height * 0.08;  // Top/bottom margins
+    var goalDepthOffset = 25;// How far back the goal extends
 
     var walls = [
+        // Top wall (full length)
         Bodies.rectangle(width / 2, fieldMarginY + 20, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
             render: { fillStyle: 'transparent' }
         }),
+        // Bottom wall (full length)
         Bodies.rectangle(width / 2, height - fieldMarginY - 13, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
             render: { fillStyle: 'transparent' }
         }),
+        // Left wall (top part - above goal)
         Bodies.rectangle(fieldMarginX + 102, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
             isStatic: true,
             label: 'WallLeftTop',
             render: { fillStyle: 'transparent' }
         }),
+        // Left wall (bottom part - below goal)
         Bodies.rectangle(fieldMarginX + 102, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 10, {
             isStatic: true,
             label: 'WallLeftBottom',
             render: { fillStyle: 'transparent' }
         }),
+        // Right wall (top part - above goal)
         Bodies.rectangle(width - fieldMarginX - 103, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
             isStatic: true,
             label: 'WallRightTop',
             render: { fillStyle: 'transparent' }
         }),
+        // Right wall (bottom part - below goal)
         Bodies.rectangle(width - fieldMarginX - 103, height / 2 + GOAL_WIDTH / 2 + 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 - 12, {
             isStatic: true,
             label: 'WallRightBottom',
             render: { fillStyle: 'transparent' }
         }),
+        // Left goal back wall (at the back of goal area)
         Bodies.rectangle(fieldMarginX - goalDepthOffset + 40, (height / 2) + 5, WALL_THICKNESS, GOAL_WIDTH + 50, {
             isStatic: true,
             label: 'LeftGoalBack',
             render: { fillStyle: 'transparent' }
         }),
+        // Left goal top wall (roof of goal)
         Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 - GOAL_WIDTH / 2 - 20, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalTop',
             render: { fillStyle: 'transparent' }
         }),
+        // Left goal bottom wall (floor of goal)
         Bodies.rectangle(fieldMarginX - goalDepthOffset / 2 + 70, height / 2 + GOAL_WIDTH / 2 + 27, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'LeftGoalBottom',
             render: { fillStyle: 'transparent' }
         }),
+        // Right goal back wall (at the back of goal area)
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset - 40, height / 2 + 5, WALL_THICKNESS, GOAL_WIDTH + 60, {
             isStatic: true,
             label: 'RightGoalBack',
             render: { fillStyle: 'transparent' }
         }),
+        // Right goal bottom wall (roff of goal)
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 - GOAL_WIDTH / 2 - 18, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalTop',
             render: { fillStyle: 'transparent' }
         }),
+        // Right goal bottom wall (floor of goal)
         Bodies.rectangle(width - fieldMarginX + goalDepthOffset / 2 - 73, height / 2 + GOAL_WIDTH / 2 + 28, goalDepthOffset + 70, WALL_THICKNESS, {
             isStatic: true,
             label: 'RightGoalBottom',
             render: { fillStyle: 'transparent' }
         }),
+        // Extra corner walls to seal any gaps
+        // Top-left corner
         Bodies.rectangle(fieldMarginX / 2 + 100, fieldMarginY + 10, fieldMarginX, WALL_THICKNESS, {
             isStatic: true,
             label: 'CornerTopLeft',
@@ -215,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
         label: 'GoalRight',
         render: { fillStyle: 'transparent' }
     });
-
+    //Adding walls and goals to world
     Composite.add(engine.world, [...walls, goalLeft, goalRight]);
 
     // --- BODIES CREATION ---
@@ -257,8 +273,64 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // --- FORMATION DEFINITIONS ---
+    var formations = {
+        '2-2': {
+            name: '2-2 Square',
+            getPositions: function (isRed, width, height, fieldMarginX) {
+                var baseX = isRed ? fieldMarginX + 80 : width - fieldMarginX - 80;
+                var midX = isRed ? width * 0.3 : width * 0.7;
+                var forwardDir = isRed ? 1 : -1;
+
+                return [
+                    { x: baseX, y: height / 2 },                                      // GK
+                    { x: midX - (50 * forwardDir), y: height / 2 - 100 },             // def top
+                    { x: midX - (50 * forwardDir), y: height / 2 + 100 },             // def bottom
+                    { x: midX + (80 * forwardDir), y: height / 2 - 60 },              // fwd top
+                    { x: midX + (80 * forwardDir), y: height / 2 + 60 }               // fwd bottom
+                ];
+            }
+        },
+        '1-2-1': {
+            name: '1-2-1 Diamond',
+            getPositions: function (isRed, width, height, fieldMarginX) {
+                var baseX = isRed ? fieldMarginX + 80 : width - fieldMarginX - 80;
+                var midX = isRed ? width * 0.3 : width * 0.7;
+                var forwardDir = isRed ? 1 : -1;
+
+                return [
+                    { x: baseX, y: height / 2 },                                      // GK
+                    { x: midX - (60 * forwardDir), y: height / 2 },                   // CDM (Central Def Mid)
+                    { x: midX, y: height / 2 - 120 },                                 // Winger Top
+                    { x: midX, y: height / 2 + 120 },                                 // Winger Bottom
+                    { x: midX + (80 * forwardDir), y: height / 2 }                    // Striker
+                ];
+            }
+        },
+        '3-1': {
+            name: '3-1 Defensive',
+            getPositions: function (isRed, width, height, fieldMarginX) {
+                var baseX = isRed ? fieldMarginX + 80 : width - fieldMarginX - 80;
+                var midX = isRed ? width * 0.3 : width * 0.7;
+                var forwardDir = isRed ? 1 : -1;
+
+                return [
+                    { x: baseX, y: height / 2 },                                      // GK
+                    { x: midX - (80 * forwardDir), y: height / 2 - 80 },              // CB Top
+                    { x: midX - (80 * forwardDir), y: height / 2 + 80 },              // CB Bottom
+                    { x: midX - (40 * forwardDir), y: height / 2 },                   // CB Center
+                    { x: midX + (80 * forwardDir), y: height / 2 }                    // Lone Striker
+                ];
+            }
+        }
+    };
+
     // --- FORMATION RESET ---
-    function resetPositions(concedingTeam) {
+    function resetPositions(formationType) {
+        // Default to current formation if not specified (or 2-2 if undefined)
+        var selectedFormation = formationType || gameState.currentFormation || '2-2';
+
+        // Remove existing dynamic bodies
         if (players.length > 0) {
             Composite.remove(engine.world, players);
         }
@@ -267,27 +339,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         players = [];
 
-        var leftTeamX = fieldMarginX + 80;
-        var leftMidX = width * 0.3;
-        var rightMidX = width * 0.7;
-        var rightTeamX = width - fieldMarginX - 80;
+        // Get positions for Red Team
+        var redPositions = formations[selectedFormation].getPositions(true, width, height, fieldMarginX);
+        redPositions.forEach(pos => {
+            players.push(createPlayer(pos.x, pos.y, 'red'));
+        });
 
-        players.push(createPlayer(leftTeamX, height / 2, 'red'));
-        players.push(createPlayer(leftMidX - 50, height / 2 - 100, 'red'));
-        players.push(createPlayer(leftMidX - 50, height / 2 + 100, 'red'));
-        players.push(createPlayer(leftMidX + 80, height / 2 - 60, 'red'));
-        players.push(createPlayer(leftMidX + 80, height / 2 + 60, 'red'));
+        // Get positions for Blue Team
+        var bluePositions = formations[selectedFormation].getPositions(false, width, height, fieldMarginX);
+        bluePositions.forEach(pos => {
+            players.push(createPlayer(pos.x, pos.y, 'blue'));
+        });
 
-        players.push(createPlayer(rightTeamX, height / 2, 'blue'));
-        players.push(createPlayer(rightMidX + 50, height / 2 - 100, 'blue'));
-        players.push(createPlayer(rightMidX + 50, height / 2 + 100, 'blue'));
-        players.push(createPlayer(rightMidX - 80, height / 2 - 60, 'blue'));
-        players.push(createPlayer(rightMidX - 80, height / 2 + 60, 'blue'));
-
+        // Ball at center
         ball = createBall(width / 2, height / 2);
 
         Composite.add(engine.world, [...players, ball]);
 
+        // Reset state
         gameState.isTurnActive = false;
         gameState.canShoot = true;
         updateTurnDisplay();
@@ -368,11 +437,10 @@ document.addEventListener("DOMContentLoaded", function () {
         var dy = dragStart.y - y;
 
         var rawDistance = Math.sqrt(dx * dx + dy * dy);
-
+        //Power effect application
         var baseForce = 0.09;
         var currentMaxForce = baseForce;
 
-        // Apply speed boost powerup - INCREASED MULTIPLIER
         // Apply speed boost powerup - INCREASED MULTIPLIER
         // Logic moved inside the shot execution block to prevent wasting it on cancelled drags
         if (storedPowerup[gameState.turn]) {
@@ -415,7 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Draw Aim Arrow and Power Meter
     Events.on(render, 'afterRender', function () {
         var ctx = render.context;
-
+        //drawing mystery box question mark
         if (mysteryBox) {
             ctx.fillStyle = '#FFFFFF';
             ctx.font = 'bold 28px Arial';
@@ -518,6 +586,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- GAME LOOP LOGIC ---
     Events.on(engine, 'beforeUpdate', function () {
+        //Check if turn is complete
         if (gameState.isTurnActive) {
             var totalEnergy = 0;
             var bodies = Composite.allBodies(engine.world);
@@ -527,7 +596,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     totalEnergy += b.speed * b.speed + b.angularSpeed * b.angularSpeed;
                 }
             }
-
+            //If all objects have stopped moving, end the turn
             if (totalEnergy < 0.01) {
                 gameState.isTurnActive = false;
                 gameState.canShoot = true;
@@ -586,9 +655,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         gameState.turn = scoringTeam === 'red' ? 'blue' : 'red';
 
+        //change formation 
+        var formationKeys = Object.keys(formations);
+        var otherFormations = formationKeys.filter(k => k !== gameState.currentFormation);
+
+        //Pick random new formation
+        var randomKey = otherFormations[Math.floor(Math.random() * otherFormations.length)];
+        gameState.currentFormation = randomKey;
+
         setTimeout(function () {
-            resetPositions();
-        }, 1500);
+            resetPositions(gameState.currentFormation);
+        }, 1500)
     }
 
     function resetGame(concedingTeam) {
@@ -632,11 +709,29 @@ document.addEventListener("DOMContentLoaded", function () {
         gameState.turn = 'red';
         gameState.turnCount = 0;
 
+
         storedPowerup.red = false;
         storedPowerup.blue = false;
         sizePower.red = false;
         sizePower.blue = false;
         lastMysteryBoxSpawn = 0;
+
+        // Reset to default formation
+        gameState.currentFormation = '2-2';
+
+        // Remove Mystery Box if exists
+        if (mysteryBox) {
+            Composite.remove(engine.world, mysteryBox);
+            mysteryBox = null;
+        }
+
+        // Update UI
+        scoreRedEl.innerText = gameState.score.red;
+        scoreBlueEl.innerText = gameState.score.blue;
+        updateTurnDisplay();
+
+        // Reset positions with default formation
+        resetPositions('2-2');
 
         updateTurnDisplay();
         scoreRedEl.innerText = gameState.score.red;
@@ -670,6 +765,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        //mysterybox despawn logic
         if (mysteryBox && gameState.turnCount > mysteryBoxTurn) {
             Composite.remove(engine.world, mysteryBox);
             mysteryBox = null;
@@ -695,6 +791,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
+        //Game over check, score more than 30
         if (gameState.turnCount > 30) {
             alert("Game Over! Time limit reached.");
             gameState.turnCount = 30;
@@ -711,7 +808,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- INITIALIZATION ---
     Render.run(render);
     var runner = Runner.create();
-    Runner.run(runner, engine);
+    Runner.run(runner, engine);//Runner is matter.js object
+    //when we put the things on window we can access the runner globally.
+
 
     window.gameRunner = runner;
     window.gameEngine = engine;
@@ -728,6 +827,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // --- GLOBAL PAUSE/RESUME FUNCTIONS ---
 function pauseGame() {
+    //putting the function here so that it can be acessed globally
     if (gameState.isPaused) return;
     Matter.Runner.stop(window.gameRunner);
     window.gameState.isPaused = true;
