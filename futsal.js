@@ -98,10 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
         Vector = Matter.Vector,
         Body = Matter.Body;
 
-    mysteryBox = null;  //mystery box object
-    mysteryBoxTurn = null; //turn when the mystery box was spawned, used for despawning after 2 turns
-    lastMysteryBoxSpawn = 0; //its a counter atleast after 2 turns
-    lastPowerupGiven = null;// track the inventory
+    mysteryBox = null;   
+    mysteryBoxTurn = null;
+    lastMysteryBoxSpawn = 0;
+    lastPowerupGiven = null;
 
     storedPowerup = {
         red: false,
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    var WALL_THICKNESS = 10;
+    var WALL_THICKNESS = 30;
     var PLAYER_RADIUS = 28;
     var BALL_RADIUS = 20;
     var GOAL_WIDTH = 120;
@@ -176,13 +176,13 @@ document.addEventListener("DOMContentLoaded", function () {
         Bodies.rectangle(width / 2, fieldMarginY + 20, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallTop',
-            render: { fillStyle: 'tansparent' }
+            render: { fillStyle: 'transparent' }
         }),
         // Bottom wall
         Bodies.rectangle(width / 2, height - fieldMarginY - 13, width, WALL_THICKNESS, {
             isStatic: true,
             label: 'WallBottom',
-            render: { fillStyle: 'tansparent' }
+            render: { fillStyle: 'transparent' }
         }),
         // Left wall segments (above and below goal)
         Bodies.rectangle(fieldMarginX + 102, height / 2 - GOAL_WIDTH / 2 - 125, WALL_THICKNESS, (height - fieldMarginY * 2 - GOAL_WIDTH) / 2 + 5, {
@@ -500,7 +500,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // User reported it's too fast with 11.25x force.
             // Reducing force multiplier to 8x (approx 70% of mass). 
             // This will make it accelerate slower (feel heavier) but still have huge momentum.
-            var forceFactor = 2.0; //this is the change in power, when the giant hits the ball or player the force gets multiplied by 6.
+            var forceFactor = 2.5; //this is the change in power, when the giant hits the ball or player the force gets multiplied by 6.
             currentMaxForce *= forceFactor;
             dragMultiplier *= forceFactor;
             console.log(gameState.turn.toUpperCase() + ' GIANT PLAYER! Force scaled by ' + forceFactor);
@@ -544,7 +544,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Events.on(render, 'afterRender', function () {
         var ctx = render.context;
 
-        // Draw mystery box  This is the game loop, so it keeps drawing every 60fps 
+        // Draw mystery box
         if (mysteryBox) {
             ctx.fillStyle = '#FFFFFF';
             ctx.font = 'bold 28px Arial';
@@ -689,7 +689,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Mystery box collection
-            if (bodyA.label === 'MysteryBox' && bodyB.label && bodyB.label.includes('Player')) { //collision logic, matter.js le aafai object create garxa, body a ra body b bhanne which shows the mystery box and team.
+            if (bodyA.label === 'MysteryBox' && bodyB.label && bodyB.label.includes('Player')) {
                 if (bodyB.team) {
                     collectMysteryBox(bodyB.team);
                 }
