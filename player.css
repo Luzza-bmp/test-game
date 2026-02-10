@@ -4,7 +4,7 @@
     transition: 1s;
 }
 .img-bg{
-    background-image: url("/img/background.png");
+    background-image: url("./img/background.png");
     background-size: cover;
     width: 100%;
     height: 100vh;
@@ -25,18 +25,30 @@
 .player-1 .player-1-title{
     width: 295px;
     height: 89px;
-    background-image: url("/img/player-1.png");
+    background-image: url("./img/player-1.png");
     background-size: cover;
     border-radius: 40px;
     background-position: center;
     margin: auto;
+        animation: player1 2s ease-in-out infinite;
+}
+@keyframes player1 {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
 }
 .player-1 .player-1-logo{
     height: 215px;
-    background-image: url("/img/team-1.png");
+    background-image: url("./img/team-1.png");
     background-size: 280px;
     background-repeat: no-repeat;
     background-position: center;
+        animation: player1logo 2s ease-in-out infinite;
+}
+@keyframes player1logo {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
 }
 .player-1 .player-1-name{
     width: 100%;
@@ -56,10 +68,25 @@
 .img-vs{
     width: 30%;
     height: 100%;
-    background-image: url("/img/versus.png");
+    background-image: url("./img/versus.png");
     background-size: 200px;
     background-position: center;
     background-repeat: no-repeat;
+       transform: scale(1.5);
+
+    /* Run zoom out then floating */
+    animation: vs 1.5s ease-out forwards, floatLogo 3s 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes vs {
+    0% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 .player-2{
     width: 35%;
@@ -72,18 +99,30 @@
 .player-2 .player-2-title{
     width: 295px;
     height: 89px;
-    background-image: url("/img/player-2.png");
+    background-image: url("./img/player-2.png");
     background-size: cover;
     border-radius: 40px;
     background-position: center;
     margin: auto;
+      animation: player2 2s ease-in-out infinite;
+}
+@keyframes player2 {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
 }
 .player-2 .player-2-logo{
     height: 215px;
-    background-image: url("/img/team-2.png");
+    background-image: url("./img/team-2.png");
     background-size: 280px;
     background-repeat: no-repeat;
     background-position: center;
+     animation: player2logo 2s ease-in-out infinite;
+}
+@keyframes player2logo {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
 }
 .player-2 .player-2-name{
     width: 100%;
@@ -109,12 +148,92 @@
 .enter-btn{
     width: 100%;
     height: 100%;
-    background-image: url("/img/enter.png");
+    background-image: url("./img/enter.png");
     background-size: 270px;
     background-position: center;
     background-repeat: no-repeat;
+      cursor: pointer;
+    animation: enter 2s ease-in-out infinite;
+}
+@keyframes enter {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* moves up */
+    100% { transform: translateY(0); }   /* back down */
 }
 .enter-btn-box a{
     width: 30%;
     height: 70%;
+}
+
+/* Audio Controls - LEFT SIDE - STACKED VERTICALLY */
+.audio-controls {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.audio-btn {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.audio-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+.audio-btn.active {
+    background-color: #4CAF50;
+}
+
+.audio-btn i {
+    font-size: 24px;
+    color: white;
+}
+
+.audio-btn.muted {
+    background-color: #ff4444;
+}
+
+.audio-btn.muted:hover {
+    background-color: #cc0000;
+}
+
+.img-bg {
+    width: 100%;
+    height: 100vh;
+    background-image: url("./img/background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    /* Start position */
+    background-position: center 0;
+
+    /* Animation */
+    animation: floatBg 10s ease-in-out infinite;
+}
+
+/* Up–Down movement */
+@keyframes floatBg {
+    0% {
+        background-position: center 0;
+    }
+    50% {
+        background-position: center -20px;
+    }
+    100% {
+        background-position: center 0;
+    }
 }
