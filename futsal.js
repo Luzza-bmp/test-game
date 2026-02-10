@@ -688,7 +688,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 handleGoal('red');
             }
 
-            // Mystery box collection
+            // Mystery box collection //collision
             if (bodyA.label === 'MysteryBox' && bodyB.label && bodyB.label.includes('Player')) {
                 if (bodyB.team) {
                     collectMysteryBox(bodyB.team);
